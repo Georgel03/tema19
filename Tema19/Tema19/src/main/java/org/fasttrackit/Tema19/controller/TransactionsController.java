@@ -52,12 +52,12 @@ public class TransactionsController {
         return service.getTransactionById(id);
     }
 
-    @PostMapping("add")
+    @PostMapping
     public Transaction addTransaction(@RequestBody Transaction transaction) {
         return service.addTransaction(transaction);
     }
 
-    @PutMapping("add")
+    @PutMapping("{id}")
     public Transaction replaceTransaction(@PathVariable int id, @RequestBody Transaction newTransaction) {
         return service.replaceTransaction(id, newTransaction);
     }
@@ -67,20 +67,15 @@ public class TransactionsController {
         return service.deleteTransaction(id);
     }
 
-    @GetMapping("/reports/type/{typeName}")
+    @GetMapping("/reports/type/{searchedType}")
     public Map<Type, List<Transaction>> getMapFromTypeToListOfTransactionsOfThatType(@PathVariable Type searchedType) {
         return service.getMapFromTypeToListOfTransactionsOfThatType(searchedType);
     }
 
-    @GetMapping("/reports/product/{productName}")
+    @GetMapping("/reports/product/{product}")
     public Map<String, List<Transaction>> getMapFromProductToListOfTransactionsOfThatProduct(@PathVariable String product) {
         return service.getMapFromProductToListOfTransactionsOfThatProduct(product);
     }
-
-
-
-
-
 
 
     }

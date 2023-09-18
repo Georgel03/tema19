@@ -3,6 +3,8 @@ package org.fasttrackit.Tema19.service;
 import org.fasttrackit.Tema19.exceptions.EntityNotFoundException;
 import org.fasttrackit.Tema19.model.Transaction;
 import org.fasttrackit.Tema19.model.Type;
+import org.fasttrackit.Tema19.repository.TransactionsReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -13,8 +15,10 @@ public class TransactionService {
 
     private List<Transaction> transactions;
 
+    @Autowired
     public TransactionService() {
-        this.transactions = TransactionsGenerator.generateTransactions();
+
+        this.transactions = TransactionsReader.generateTransactions();
     }
 
     public List<Transaction> getTransactions() {
@@ -69,13 +73,15 @@ public class TransactionService {
 
     public Transaction replaceTransaction(int id, Transaction newTransaction) {
 
-        transactions.stream()
-                .filter(transaction -> transaction.getId() == id)
-                .findFirst()
-                .map(transaction -> transactions.remove(transaction))
-                .orElseThrow(() -> new EntityNotFoundException("Nu a fost gasita tranzactia cu id " + id, id));
-
-        transactions.add(newTransaction);
+        transactions = transactions.stream()
+                .map(transaction -> {
+                    if (transaction.getId() == id) {
+                        return newTransaction;
+                    } else {
+                        return transaction;
+                    }
+                })
+                .collect(Collectors.toList());
 
         return newTransaction;
 
@@ -95,10 +101,11 @@ public class TransactionService {
     public Map<Type, List<Transaction>> getMapFromTypeToListOfTransactionsOfThatType(Type searchedType) {
 
         Map<Type, List<Transaction>> myMap = new HashMap<>();
-             transactions.stream()
+        List<Transaction> transactionList = transactions.stream()
                 .filter(transaction -> transaction.getType().equals(searchedType))
-                .map(transaction -> myMap.put(searchedType, getTransactionByType(searchedType)));
+                .collect(Collectors.toList());
 
+        myMap.put(searchedType, transactionList);
 
         return myMap;
     }
@@ -106,9 +113,11 @@ public class TransactionService {
     public Map<String, List<Transaction>> getMapFromProductToListOfTransactionsOfThatProduct(String product) {
 
         Map<String, List<Transaction>> myMap = new HashMap<>();
-        transactions.stream()
+        List<Transaction> transactionList = transactions.stream()
                 .filter(transaction -> transaction.getProduct().equals(product))
-                .map(transaction -> myMap.put(product, getTransactionByProduct(product)));
+                .collect(Collectors.toList());
+
+        myMap.put(product, transactionList);
 
         return myMap;
     }

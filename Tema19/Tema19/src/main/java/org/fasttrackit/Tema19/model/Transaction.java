@@ -2,7 +2,7 @@ package org.fasttrackit.Tema19.model;
 
 public class Transaction {
 
-    private static int idCount = 1;
+
     private int id;
 
     private String product;
@@ -11,16 +11,13 @@ public class Transaction {
 
     private double amount;
 
-    public Transaction(String product, Type type, double amount) {
-        this.id = idCount++;
+    public Transaction(int id, String product, Type type, double amount) {
+        this.id = id;
         this.product = product;
         this.type = type;
         this.amount = amount;
     }
 
-    public Transaction() {
-
-    }
 
     public int getId() {
         return id;
